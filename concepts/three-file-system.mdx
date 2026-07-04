@@ -1,7 +1,7 @@
 ---
-title: "The Three-File System: CSBP Architecture"
+title: "The Three-File System: CSBP Architecture and Layer Roles"
 sidebarTitle: "Three-File System"
-description: "CSBP uses exactly three files with strictly separated jobs: bootstrapping, runtime practice storage, and practice formation. Learn why that separation matters."
+description: "CSBP uses exactly three files, each with one job: bootstrapping, runtime practice storage, and practice formation. Learn why the separation matters."
 ---
 
 CSBP is intentionally small. The entire system is three files, and each file has one job that the others cannot touch. That separation is not cosmetic — it is the mechanism that keeps the runtime layer stable, prevents draft or discussion logic from leaking into active behavior, and ensures the system definition itself cannot be rewritten during normal use.

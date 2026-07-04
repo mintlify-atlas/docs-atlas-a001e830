@@ -1,5 +1,5 @@
 ---
-title: "Authority Model: Where CSBP Sits in the Stack"
+title: "Authority Model: How CSBP Fits into the Codex Stack"
 sidebarTitle: "Authority Model"
 description: "CSBP is explicitly the lowest-authority layer in the Codex stack. Understand the authority hierarchy, conflict rules, and what CSBP can and cannot define."
 ---
@@ -11,10 +11,7 @@ Every instruction layer that Codex reads has a position in an authority hierarch
 CSBP occupies the lowest position in the authority order:
 
 ```text
-operator instruction
-  └── AGENTS.md
-        └── local project instructions or project-local guidance
-              └── CSBP
+operator instruction > AGENTS.md > local project instructions or project-local guidance > CSBP
 ```
 
 Every layer above CSBP outranks it. Operator instruction is always the highest authority. `AGENTS.md` comes next, followed by any local project instructions or project-local guidance that apply to the current environment. CSBP sits below all of them.
