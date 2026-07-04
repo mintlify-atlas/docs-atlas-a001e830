@@ -1,0 +1,113 @@
+---
+title: "The Three-File System: CSBP Architecture"
+sidebarTitle: "Three-File System"
+description: "CSBP uses exactly three files with strictly separated jobs: bootstrapping, runtime practice storage, and practice formation. Learn why that separation matters."
+---
+
+CSBP is intentionally small. The entire system is three files, and each file has one job that the others cannot touch. That separation is not cosmetic — it is the mechanism that keeps the runtime layer stable, prevents draft or discussion logic from leaking into active behavior, and ensures the system definition itself cannot be rewritten during normal use.
+
+## The three layers at a glance
+
+| File | Role | Mutable at runtime | Read timing |
+|---|---|---|---|
+| `CSBP-entry-point.txt` | Bootstrap and routing layer. Defines system identity, authority order, load order, mode routing, and write restrictions. | No | First, every session |
+| `shared-best-practice.txt` | Runtime layer. Stores already-promoted practices that may guide live work when relevant. | Yes — but only through the compiler path and with operator approval | After entry point |
+| `shared-best-practice-compiler.txt` | Formation layer. Governs formation, evaluation, normalization, promotion, revision, deprecation, removal, and rejection. | No | Only during practice formation work |
+
+## Layer 1 — `CSBP-entry-point.txt`
+
+`CSBP-entry-point.txt` is the bootstrap and routing layer. It is the first file read in every session, and it defines everything a fresh Codex session needs to understand CSBP before touching any other file.
+
+It sets:
+
+- **System identity** — what CSBP is and what files it includes
+- **Authority order** — where CSBP sits relative to operator instruction, `AGENTS.md`, and local project guidance
+- **Load order** — the explicit sequence in which the other two files are read
+- **Mode routing** — which mode (runtime or practice formation) applies and when
+- **Write restrictions** — which files must never be modified and under what conditions `shared-best-practice.txt` may change
+
+The entry point does not contain runtime practices and does not participate in formation decisions. Its only job is to establish the system so the other layers operate correctly.
+
+<Note>
+**The entry point is read first, every session.** Codex must not infer CSBP behavior from filenames alone or skip system-definition resolution. Reading this file activates CSBP for the current session.
+</Note>
+
+## Layer 2 — `shared-best-practice.txt`
+
+`shared-best-practice.txt` is the runtime layer. It stores only practices that have already passed through the compiler protocol and received operator approval — no drafts, no candidates, no speculative entries.
+
+During a normal Codex session, this is the only file (besides the entry point) that is loaded. Each block in the file follows a fixed shape:
+
+```text
+id:           PNNN sequential practice identifier
+status:       active | deprecated
+scope:        global | environment-global
+kind:         environment | orientation | operation | verification
+applies_when: operational condition for relevance
+goal:         intended operational effect
+do:           primary default action
+avoid:        recurring competing pattern
+```
+
+The runtime layer is the only CSBP file that is mutable after initial setup — but that mutability is tightly controlled. Changes must follow the compiler protocol and require explicit operator approval. No practice enters, leaves, or changes in this file without going through that path.
+
+## Layer 3 — `shared-best-practice-compiler.txt`
+
+`shared-best-practice-compiler.txt` is the formation layer. It governs every lifecycle operation that can affect `shared-best-practice.txt`:
+
+- **Formation** — evaluating whether a recurring pattern qualifies as a CSBP practice
+- **Normalization** — rewriting candidates as preventive, runtime-ready instructions
+- **Promotion** — moving an approved candidate into the runtime layer
+- **Revision** — updating wording, scope, or kind of an existing practice
+- **Deprecation** — marking a practice as no longer active for runtime use
+- **Removal** — deleting a deprecated or invalid entry on direct operator instruction
+- **Rejection** — declining a candidate that does not meet admission criteria
+
+The compiler is not loaded during normal runtime use. It is only activated when the operator explicitly requests practice formation or maintenance work. Nothing in the compiler file is treated as active runtime guidance.
+
+<Info>
+**The compiler is a decision layer, not a memory layer.** Its logic evaluates whether a pattern deserves to exist in the runtime file. It does not apply practices or behave like one.
+</Info>
+
+## The two load paths
+
+CSBP has two distinct load paths depending on what work is being done.
+
+**Runtime path** — used during every normal Codex session:
+
+```text
+CSBP-entry-point.txt
+  └── shared-best-practice.txt
+```
+
+**Formation path** — used only when the operator requests practice formation or maintenance:
+
+```text
+CSBP-entry-point.txt
+  └── shared-best-practice.txt
+        └── shared-best-practice-compiler.txt
+```
+
+The compiler is never loaded during the runtime path. This is a hard boundary, not a soft preference. Compiler logic must not leak into runtime use.
+
+## Why keeping the three jobs separate matters
+
+Each of the three files owns exactly one job:
+
+| Job | File responsible | Why separation matters |
+|---|---|---|
+| Define the system | `CSBP-entry-point.txt` | Prevents the runtime layer from redefining what CSBP is or what authority it has |
+| Apply promoted practices | `shared-best-practice.txt` | Prevents speculative or draft guidance from becoming active behavior |
+| Form or revise practices | `shared-best-practice-compiler.txt` | Prevents formation discussion and drafting logic from leaking into normal operation |
+
+If these jobs are mixed together, CSBP stops being a controlled best-practice layer and starts behaving like an unstable second contract — one where the rules of the system can be shifted by the same layer that applies them.
+
+The separation is what makes the runtime layer trustworthy. A practice in `shared-best-practice.txt` exists because it survived a formation process and received operator approval. If the formation logic were embedded in the same file, that guarantee would not hold.
+
+## The system definition lock
+
+<Warning>
+**Never modify `CSBP-entry-point.txt` or `shared-best-practice-compiler.txt`.** These are fixed system-definition layers. Do not rewrite them, extend them, or treat them as mutable during runtime use or practice formation work. Runtime practice changes belong exclusively in `shared-best-practice.txt`, and only after following the compiler protocol with operator approval.
+</Warning>
+
+The lock exists because both the entry point and the compiler define the rules of the system itself. If either were editable during normal operation, the system definition would be unstable — the rules governing what CSBP is and how practices are formed could drift without review. Fixing them ensures that what the system promises does not change underneath the practices it stores.

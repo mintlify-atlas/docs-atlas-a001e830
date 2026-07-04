@@ -1,0 +1,88 @@
+---
+title: "Admission and Rejection Criteria for CSBP Practices"
+sidebarTitle: "Admission & Rejection"
+description: "The criteria that determine whether a candidate is admitted into shared-best-practice.txt or rejected — and why the filter is part of the system."
+---
+
+Not every recurring observation belongs in CSBP. The compiler applies a deliberate filter during formation: candidates that do not meet a clear threshold for recurrence, scope, actionability, and authority compatibility are rejected before they can enter `shared-best-practice.txt`. This filter is not a bureaucratic barrier — it is what keeps the runtime layer useful. A small set of high-quality practices that reliably apply is more valuable than a large collection of uncertain ones.
+
+## Why the filter matters
+
+CSBP is useful because it says no.
+
+If every useful observation were admitted, the runtime layer would fill with project-specific notes, one-off corrections, vague reminders, and policy statements that do not translate into consistent runtime behavior. The admission and rejection criteria exist to preserve signal quality. A practice that fails the filter is not lost — it can become a direct operator instruction, a note in chat, or a project-level instruction — it simply does not belong in the shared runtime layer.
+
+## Valid CSBP practice patterns
+
+Before examining the criteria in detail, it helps to understand what kinds of patterns CSBP is built for:
+
+- The same mistake recurring across sessions — not a one-time error
+- A repeatedly missed verification step — not a step that was missed once
+- A useful working default being rediscovered — not a project-specific preference
+- An environment-level constraint that affects multiple sessions — not a temporary condition
+- A recurring operational correction that would otherwise have to be re-stated — not a post-failure diagnosis
+
+## Criteria
+
+<Tabs>
+  <Tab title="Admit">
+    A candidate is admitted only when it satisfies all of the following:
+
+    - **Recurring across sessions** — the pattern appears repeatedly, not once or twice by coincidence
+    - **Global or environment-global** — the practice applies broadly, not only within one project or one task
+    - **Actionable during real work** — the practice produces a concrete, usable behavior during live sessions
+    - **Preventive by default** — the practice stops a recurring wrong pattern from happening, rather than recovering from it afterward
+    - **Expressible as a short operational instruction** — the practice can be stated as a direct instruction telling Codex what to do
+    - **Stable across work contexts** — the wording and intent hold without needing adjustment per task or project
+    - **Not already covered by `AGENTS.md`** — the practice adds something not captured by a higher-authority instruction
+    - **Not already covered by a stronger local instruction** — the practice does not duplicate project-level guidance
+    - **Likely to reduce recurring waste or error** — admitting the practice has a clear operational benefit
+  </Tab>
+  <Tab title="Reject">
+    A candidate is rejected when it matches any of the following:
+
+    - **Project-specific** — only relevant to one project, codebase, or task
+    - **Session-specific** — only relevant to the current conversation or session
+    - **One-off** — happened once and does not reflect a recurring pattern
+    - **Vague** — the instruction is too imprecise to guide consistent behavior
+    - **Diagnostic-only** — identifies the problem but does not instruct a preventive action
+    - **Recovery-only** — addresses what to do after failure, not how to prevent it
+    - **Post-failure only** — triggered by a specific past failure rather than a recurring condition
+    - **Duplicate** — already exists in `shared-best-practice.txt`, `AGENTS.md`, or local project instructions
+    - **Too broad to match reliably** — the `applies_when` condition would match almost everything, making the practice non-specific
+    - **Too narrow to matter outside one case** — the practice only applies in a context too specific to generalize
+    - **Conflicts with higher-authority instructions** — the practice contradicts operator instruction, `AGENTS.md`, or local project guidance
+    - **Depends on hidden or unstable context** — the practice only holds under conditions that are not reliably present
+    - **Reads like explanation instead of instruction** — the block describes why something happens rather than what to do
+    - **Reads like policy instead of operational correction** — the block states a rule or standard rather than a working default
+  </Tab>
+</Tabs>
+
+## What belongs vs what stays out
+
+The table below illustrates how the same general concern can cross the boundary between valid and invalid depending on its scope and formulation.
+
+| Pattern | Verdict | Reason |
+|---|---|---|
+| Codex repeatedly skips checking exit codes across sessions | **Admit** | Recurring, global, preventive, actionable, expressible as a short instruction |
+| Codex forgot to check an exit code in yesterday's session | **Reject** | One-off, session-specific |
+| Always verify API calls succeed before proceeding | **Admit** | Recurring verification gap, global, preventive |
+| Remember to use the project's internal API wrapper instead of direct HTTP calls | **Reject** | Project-specific |
+| Codex should generally be careful | **Reject** | Vague — not actionable or expressible as an operational instruction |
+| After a failure, reconstruct the sequence to understand what went wrong | **Reject** | Recovery-only, post-failure only |
+| When starting a multi-step operation, confirm the initial state before proceeding | **Admit** | Preventive, global, actionable, expressible as an orientation instruction |
+| This project uses tabs, not spaces | **Reject** | Project-specific style preference |
+| Codex should respect the operator's authority | **Reject** | Policy statement — not an operational correction |
+
+<Note>
+  Admission and rejection are not permanent verdicts on the underlying observation. A rejected candidate may be revisited later if the pattern becomes clearly recurring, or reformulated more narrowly to meet the criteria. Rejection means the candidate is not ready for the shared runtime layer — it does not mean the observation was wrong.
+</Note>
+
+<CardGroup cols={2}>
+  <Card title="Practice Formation" icon="circle-play" href="/lifecycle/formation">
+    Understand how the compiler evaluates a candidate before applying admission and rejection criteria.
+  </Card>
+  <Card title="Normalization" icon="sliders" href="/lifecycle/normalization">
+    See how admitted candidates are rewritten into runtime-ready practice blocks.
+  </Card>
+</CardGroup>

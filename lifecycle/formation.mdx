@@ -1,0 +1,101 @@
+---
+title: "Practice Formation: From Observation to Proposal"
+sidebarTitle: "Formation"
+description: "How a candidate practice is initiated, shaped by the compiler, and carried through evaluation to a formal proposal ready for operator review."
+---
+
+Practice formation is the controlled process by which a recurring operational pattern moves from an informal observation into a structured proposal. Formation is never automatic — it begins only when the operator asks for it, and it ends only when the operator approves or rejects the resulting candidate. Nothing enters `shared-best-practice.txt` without passing through this process.
+
+## How formation is triggered
+
+Formation opens in one of two common ways.
+
+**From an operator observation.** The operator notices a recurring issue — a repeated mistake, a missed step, a useful default being rediscovered — and asks Codex whether it belongs in CSBP. Codex then checks the pattern against the compiler rules and proceeds to evaluate, propose, split, narrow, or reject the candidate.
+
+**From a session review.** After a block of work, the operator asks Codex to review the session for possible recurring practices. Codex may surface candidates, but it does not promote them independently. The operator still decides what moves forward.
+
+## Valid inputs to the compiler
+
+The compiler accepts a wide range of starting material. You do not need a polished description to open formation — rough observations are expected inputs.
+
+Valid inputs include:
+
+- Operator observation
+- Free-text description
+- Conversation fragment
+- Rough hypothesis
+- Reported recurring mistake
+- Reported recurring omission
+- Reported recurring missed opportunity during real work
+
+## What the compiler may do during discussion
+
+Once formation opens, the compiler works with the raw input before producing a proposal. It does not simply transcribe what the operator said.
+
+During the formation discussion, the compiler may:
+
+- Reinterpret the reported issue to find the underlying pattern
+- Identify the most operationally relevant form of the pattern
+- Split a single input into multiple distinct patterns if more than one issue is present
+- Merge similar patterns if two inputs describe the same underlying behavior
+- Narrow or broaden the formulation to achieve better scope fit
+- Classify the issue as operational-level, policy-level, project-specific, or too weak in recurrence, scope, or clarity for promotion
+
+The goal of discussion is to arrive at a candidate that accurately reflects a recurring operational pattern — not to promote the input as-is.
+
+## External check
+
+The compiler may suggest a lightweight web check when outside recurrence could materially clarify the decision. This is optional and is for practical corroboration only — not proof. When used, it favors primary practical sources close to the real environment, tool, workflow, or issue being discussed. Broad or unnecessary research is avoided.
+
+## The promotion path
+
+Every candidate follows the same path from observation to runtime practice.
+
+<Steps>
+  <Step title="Operator raises or asks for a candidate">
+    Formation begins when the operator asks Codex to evaluate a recurring issue or review a session for possible practices. Codex does not open formation on its own.
+  </Step>
+  <Step title="Codex evaluates recurrence, scope, actionability, and authority compatibility">
+    The compiler checks the candidate against the admission and rejection criteria. Patterns that are too narrow, too vague, project-specific, or in conflict with higher-authority instructions are stopped here.
+  </Step>
+  <Step title="The candidate is normalized into runtime block shape">
+    If the pattern is valid, the compiler rewrites it as a preventive default using the standard block shape — `id`, `status`, `scope`, `kind`, `applies_when`, `goal`, `do`, `avoid`. Narrative and non-operational explanation are removed.
+  </Step>
+  <Step title="Weak or local material is rejected">
+    Candidates that do not meet the admission threshold — one-off, session-specific, vague, policy-like, or already covered by `AGENTS.md` — are rejected here and do not advance.
+  </Step>
+  <Step title="Valid material is proposed">
+    The compiler produces a formal proposal using the proposal shape: `candidate`, `kind`, `scope`, `rationale`, and the `proposed block`. The proposal is presented to the operator for review.
+  </Step>
+  <Step title="The operator approves or rejects">
+    The operator reviews the proposal and makes the decision. The compiler may propose; only the operator may approve.
+  </Step>
+  <Step title="Only approved practice enters shared-best-practice.txt">
+    If the operator approves, the practice is promoted and written into `shared-best-practice.txt`. If the operator rejects, nothing is written. No practice enters the runtime file without explicit operator approval.
+  </Step>
+</Steps>
+
+<Note>
+  The `PNNN` id is assigned **only at promotion** — not during the proposal stage. The proposed block uses a placeholder for `id` until the operator approves and the practice is written into `shared-best-practice.txt`.
+</Note>
+
+## Decisions the compiler can make
+
+At the end of formation, the compiler issues one of five decisions:
+
+| Decision | Meaning |
+|---|---|
+| **Promote** | The candidate is ready for runtime use and enters `shared-best-practice.txt` upon operator approval. |
+| **Revise** | The candidate is valid but wording, scope, or split is still wrong. Revision happens in the same working pass. |
+| **Reject** | The candidate is not suitable for shared runtime practice. |
+| **Deprecate** | An existing active practice is marked deprecated — excluded from runtime use but retained for review history. |
+| **Remove** | A deprecated or invalid practice is removed from `shared-best-practice.txt` on direct operator instruction. |
+
+<CardGroup cols={2}>
+  <Card title="Admission & Rejection" icon="filter" href="/lifecycle/admission-and-rejection">
+    Learn what the compiler admits and what it rejects — and why the filter is part of the system.
+  </Card>
+  <Card title="Normalization" icon="sliders" href="/lifecycle/normalization">
+    See how raw candidate observations are rewritten into runtime-ready practice blocks.
+  </Card>
+</CardGroup>

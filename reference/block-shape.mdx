@@ -1,0 +1,107 @@
+---
+title: "Practice Block Schema: Fields and Valid Values"
+sidebarTitle: "Block Schema"
+description: "Complete field-by-field reference for the CSBP practice block format, including valid values, runtime read order, and a full example block."
+---
+
+Every promoted practice in `shared-best-practice.txt` uses a fixed eight-field block shape. The shape is defined in both `shared-best-practice.txt` and `shared-best-practice-compiler.txt` and must be followed exactly. This page documents every field, its valid values, the rules governing runtime read order, and what happens when a practice carries `deprecated` status.
+
+## Fields
+
+<ParamField body="id" type="string" required>
+  Sequential identifier in `PNNN` format (for example, `P001`, `P002`). The `id` is a stable reference used to identify a practice across revisions and maintenance history. It is assigned **only at promotion** — never during the proposal stage. The final runtime `id` is assigned by the operator.
+</ParamField>
+
+<ParamField body="status" type="enum" required>
+  Determines whether the practice is eligible for runtime use.
+
+  | Value | Meaning |
+  |---|---|
+  | `active` | Use at runtime when the `applies_when` condition matches. |
+  | `deprecated` | Exclude from runtime use. The block remains in the file for review and maintenance history. |
+</ParamField>
+
+<ParamField body="scope" type="enum" required>
+  Classifies the breadth of relevance for the practice.
+
+  | Value | Meaning |
+  |---|---|
+  | `global` | Stable across work contexts. Applies regardless of the specific environment or project. |
+  | `environment-global` | Stable across the current working environment across sessions. Scoped to a particular environment but persistent within it. |
+</ParamField>
+
+<ParamField body="kind" type="enum" required>
+  Classifies the primary role of the practice for runtime interpretation. This field helps determine how the practice should be applied during real work.
+
+  | Value | Meaning |
+  |---|---|
+  | `environment` | A stable environment condition, constraint, or affordance. Use for facts about the working environment that should always be known. |
+  | `orientation` | Setup, framing, or initial approach. Use for practices that shape how work begins or how a task is framed. |
+  | `operation` | An execution step or working method during real work. Use for practices that govern actions taken mid-task. |
+  | `verification` | A check, confirmation, or closure practice. Use for practices that confirm correctness before proceeding or completing. |
+</ParamField>
+
+<ParamField body="applies_when" type="string" required>
+  Describes the operational condition under which the practice is relevant. This field drives the runtime relevance check — the practice is only applied when the current work matches this condition. It should describe **the work context**, not the project. It must be stable across work contexts and specific enough to trigger reliably.
+</ParamField>
+
+<ParamField body="goal" type="string" required>
+  States the intended operational effect of the practice. The `goal` explains *why* the practice exists — what it is trying to achieve or prevent. It is used during runtime to interpret the practice correctly before applying the `do` action.
+</ParamField>
+
+<ParamField body="do" type="string" required>
+  States the primary correct default action. This is the main instruction: what Codex should do when the practice applies. It should be written as a direct, actionable verb phrase — a preventive default, not a recovery step.
+</ParamField>
+
+<ParamField body="avoid" type="string" required>
+  States the recurring competing failure pattern — the wrong default this practice guards against. The `avoid` field is read as a competing-pattern guard after `do` is applied. It names the specific regression the practice is designed to prevent.
+</ParamField>
+
+## Runtime read order
+
+When a practice block is encountered at runtime, the fields are processed in a strict sequence:
+
+1. **Check `status`** — if `deprecated`, stop reading the block and skip it entirely.
+2. **Check `applies_when`** — if the current work does not match the operational condition, skip the block.
+3. **Use `goal` for interpretation** — understand the intended effect before acting.
+4. **Apply `do` as the default action** — execute the primary correct move.
+5. **Use `avoid` as the competing-pattern guard** — confirm the wrong pattern is not being followed.
+
+This sequence ensures that deprecated and irrelevant practices never influence active work, and that `do` is always interpreted through the lens of `goal` before being applied.
+
+## Field rules summary
+
+The compiler protocol defines the following field rules explicitly:
+
+- **`id`**: Use `PNNN` sequential format. Assigned only at promotion by the operator. Never assigned in the proposal stage.
+- **`scope`**: Classify the practice as `global` or `environment-global`. Do not invent other values.
+- **`kind`**: Classify the primary role for runtime interpretation using the four defined values.
+- **`applies_when`**: Describe the operational condition, not the project. The condition must be stable across work contexts.
+- **`goal`**: State the intended operational effect. This is the *why*.
+- **`do`**: State the primary correct default action. This is the *what to do*.
+- **`avoid`**: State the recurring wrong pattern. This is the *what not to do*.
+
+## Block quality rules
+
+The compiler enforces one key quality constraint: **one practice equals one recurring pattern**. If a candidate contains more than one main action or more than one wrong pattern, it must be split into separate practices. Each fragment is then evaluated independently before promotion.
+
+A practice should be rewritten or rejected if it is too broad, too narrow, overly explanatory, or not directly usable during real work.
+
+## Example practice block
+
+The following is a complete, valid practice block demonstrating all eight fields:
+
+```text
+id: P001
+status: active
+scope: global
+kind: verification
+applies_when: running shell commands during real work
+goal: prevent silent failures from propagating
+do: check the exit code of shell commands before proceeding
+avoid: assuming a shell command succeeded without verification
+```
+
+## Deprecated block behavior
+
+A practice with `status: deprecated` is excluded from runtime use. It is **not deleted** from `shared-best-practice.txt`. Deprecated blocks remain in the file so the practice history is preserved for review and maintenance purposes. A deprecated block may be removed entirely, but only on direct operator instruction — never automatically and never during normal runtime use.

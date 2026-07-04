@@ -1,0 +1,108 @@
+---
+title: "Normalizing Candidate Practices into Runtime Shape"
+sidebarTitle: "Normalization"
+description: "How the compiler rewrites a raw candidate into a clean, runtime-ready practice block using the standard CSBP block shape and normalization rules."
+---
+
+Normalization is the step that converts a raw candidate — which may arrive as a rough description, a conversation fragment, or an informal observation — into a structured, runtime-ready practice block. A normalized block must be immediately usable during live work without interpretation. It must be precise enough to match a real condition, short enough to apply in the moment, and framed as a preventive default rather than a retrospective correction.
+
+Normalization happens after a candidate passes the admission filter and before a proposal is presented to the operator for approval. It is not cosmetic cleanup — it is a substantive rewrite that may significantly change the wording, scope, or framing of the original input.
+
+## Normalization rules
+
+The compiler applies the following rules when rewriting a candidate into block shape.
+
+**What to do:**
+
+- Rewrite as a preventive default — the block should stop a wrong pattern from occurring, not recover from it
+- Rewrite as a runtime-ready instruction — the block must be directly usable during work, not during post-mortem
+- Keep one pattern per practice — a single block addresses one recurring pattern only
+- Prefer short stable wording — the block should read the same way across contexts
+- Prefer direct verbs — use `check`, `confirm`, `set`, `verify`, not hedged or conditional phrasing
+
+**What to remove:**
+
+- Narrative — background story about why the issue occurred
+- Non-operational explanation — reasoning that does not change the behavior
+- Project-specific detail — any reference to a specific codebase, tool version, or named project
+- Fallback phrasing — `if that does not work`, `as a last resort`, `otherwise`
+- Recovery-first phrasing — `after a failure`, `when something goes wrong`, `to recover`
+
+## Block quality rules
+
+A single block represents a single recurring pattern. If the raw candidate contains more than one main action or more than one wrong pattern, the compiler splits it into separate candidates and evaluates each one independently before promotion.
+
+A block is rewritten or rejected if it is:
+
+- Too broad — the `applies_when` condition would match almost every situation
+- Too narrow — the practice only makes sense in one specific context
+- Overly explanatory — the block reads like a note about why something happened
+- Not usable during real work — the block cannot be applied in the moment without additional interpretation
+
+## The standard block shape
+
+Every normalized practice uses this fixed shape, matching the structure of `shared-best-practice.txt`:
+
+```text
+id:           PNNN sequential practice identifier (assigned at promotion)
+status:       active | deprecated
+scope:        global | environment-global
+kind:         environment | orientation | operation | verification
+applies_when: operational condition for relevance
+goal:         intended operational effect
+do:           primary default action
+avoid:        recurring competing pattern
+```
+
+## Normalization example
+
+The following example shows how a raw candidate observation is transformed into a normalized runtime block.
+
+<CodeGroup>
+
+```text Raw candidate observation
+Codex often forgets to verify that a shell command actually succeeded before
+proceeding. Recovery is painful. We should make sure it checks exit codes.
+```
+
+```text Normalized block
+id:           (assigned at promotion)
+status:       active
+scope:        global
+kind:         verification
+applies_when: running shell commands during real work
+goal:         prevent silent failures from propagating
+do:           check the exit code of shell commands before proceeding
+avoid:        assuming a shell command succeeded without verification
+```
+
+</CodeGroup>
+
+The raw observation contains narrative (`Recovery is painful`), non-operational framing (`We should make sure`), and no structured fields. The normalized block removes all of that and produces a direct, preventive instruction with a concrete `applies_when` condition, a clear `goal`, an actionable `do`, and a named failure pattern in `avoid`.
+
+## The proposal shape
+
+Once normalization is complete, the compiler presents a formal proposal to the operator. The proposal shape includes:
+
+```text
+candidate:      short description of the recurring pattern
+kind:           environment | orientation | operation | verification
+scope:          global | environment-global
+rationale:      one short operational sentence
+proposed block: full block shape draft
+```
+
+The `id` field in the proposed block is left unassigned. The `PNNN` identifier is assigned only when the operator approves the promotion and the practice is written into `shared-best-practice.txt`.
+
+<Note>
+  The `rationale` field in a proposal must be a single short operational sentence — not a paragraph, not a history of the issue, not a justification. It exists to give the operator a fast, clear reason to evaluate the proposal.
+</Note>
+
+<CardGroup cols={2}>
+  <Card title="Admission & Rejection" icon="filter" href="/lifecycle/admission-and-rejection">
+    Review the criteria the compiler applies before normalization begins.
+  </Card>
+  <Card title="Block Shape Reference" icon="cube" href="/reference/block-shape">
+    See the full specification for the runtime practice block format.
+  </Card>
+</CardGroup>

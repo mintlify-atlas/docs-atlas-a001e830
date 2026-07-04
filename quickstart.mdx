@@ -1,47 +1,145 @@
 ---
-title: "Quickstart"
-description: "Begin with a guide on the fastest path to a successful outcome"
+title: "Get Started with CSBP in Your Codex Setup"
+sidebarTitle: "Quickstart"
+description: "Install the three CSBP files, wire the entry point into AGENTS.md, and verify that Codex loads and acknowledges your best practice layer."
 ---
 
-Describe how someone begins using your product. What is the first thing they need to do? Are there any prerequisites?
-
-A quickstart should take someone from zero to using your product. They'll get a quick win and a sense of what they can accomplish.
-
-## Prerequisites
-
-Before you begin, you must have:
-
-- Requirement one (for example, Node.js 18+, a free account, an API key)
-- Requirement two (for example, a compatible device, a compatible browser, a compatible operating system)
-
-## Get started
+Getting CSBP running in a Codex setup takes only a few minutes. You will place three files in a recommended directory, add one bootstrap line to your `AGENTS.md`, and then verify that Codex acknowledges the layer at session start. Once CSBP is active, Codex reads the entry point first every session, then loads the runtime practice file — and only opens the compiler when you explicitly ask for practice formation work.
 
 <Steps>
-  <Step title="Install">
-    Describe how to install your product or sign up.
 
-    ```bash
-    npm install your-package
-    ```
-  </Step>
-  <Step title="Configure">
-    Describe any setup or configuration needed before first use.
+  <Step title="Create the directory layout">
+    Place all three CSBP files inside your `.codex/memories/` directory. This keeps them co-located and clearly separate from project source files.
 
-    ```bash
-    your-cli init
+    ```text
+    .codex/
+      memories/
+        CSBP-entry-point.txt
+        shared-best-practice.txt
+        shared-best-practice-compiler.txt
     ```
-  </Step>
-  <Step title="Run it">
-    Show the first thing a user does to see it working.
 
-    ```bash
-    your-cli start
-    ```
+    Copy the files from the [CSBP repository](https://github.com/XxYouDeaDPunKxX/CSBP-Codex-Shared-Best-Practice) exactly as released. Do not modify `CSBP-entry-point.txt` or `shared-best-practice-compiler.txt` — they are fixed system-definition layers.
   </Step>
+
+  <Step title="Wire the entry point into AGENTS.md">
+    Open your `.codex/AGENTS.md` and add a bootstrap instruction that tells Codex to read `CSBP-entry-point.txt` at the start of every session, before any other CSBP file is consulted.
+
+    The exact phrasing depends on your host environment contract, but the minimal bootstrap line looks like this:
+
+    ```markdown
+    ## CSBP
+
+    Read `.codex/memories/CSBP-entry-point.txt` at the start of every session before using CSBP.
+    ```
+
+    This ensures a fresh Codex session reads the entry point first, activates CSBP for that session, and then loads the runtime practice file. Do not rely on filename inference alone — the entry point must be read explicitly.
+  </Step>
+
+  <Step title="Initialise shared-best-practice.txt">
+    On first install, `shared-best-practice.txt` should contain only the file header that ships with the CSBP repository — no practice blocks yet. That is the correct empty state.
+
+    When the runtime file has no active practices, Codex continues work normally without CSBP runtime guidance. There is nothing to configure. The compiler is not loaded during normal runtime; it is only opened when you ask for practice formation work.
+
+    A minimal `shared-best-practice.txt` with no practices yet looks like this:
+
+    ```text
+    ENTRY
+    load through CSBP-entry-point.txt
+
+    NAME
+    shared best practice runtime
+
+    VERSION
+    0.1
+
+    ROLE
+    runtime store for practices already promoted by the shared best practice compiler protocol
+    runtime store for runtime-ready practices only
+    ```
+
+    As practices are formed and approved, promoted blocks are appended below the header using the fixed block shape.
+  </Step>
+
+  <Step title="Understand what an active practice block looks like">
+    Once you have gone through at least one formation cycle, promoted practices will appear in `shared-best-practice.txt` in this shape:
+
+    ```text
+    id: P001
+    status: active
+    scope: global
+    kind: verification
+    applies_when: closing out a task that involved file changes
+    goal: ensure all changed files are confirmed written before marking work done
+    do: explicitly verify each modified file exists and contains the expected content before closing
+    avoid: assuming a write succeeded because no error was reported
+    ```
+
+    Each field has a specific runtime function. The `status` field is checked first — deprecated blocks are skipped entirely. Then `applies_when` is evaluated against the current work context. If it matches, `do` is applied as the default action and `avoid` is used as the competing-pattern guard.
+
+    <Note>
+      The `id` (in `PNNN` format) is assigned only at promotion, not during the proposal stage. Never assign a final runtime id to a practice that has not yet been approved by the operator.
+    </Note>
+  </Step>
+
+  <Step title="Verify CSBP is active">
+    At the start of your next Codex session, ask Codex to confirm CSBP is loaded:
+
+    ```text
+    Confirm CSBP is active and report any active practices.
+    ```
+
+    A correctly configured session will produce a response like one of the following:
+
+    **If `shared-best-practice.txt` has active practices:**
+
+    ```text
+    CSBP is active. Entry point loaded. Runtime file loaded.
+    Active practices: P001 (verification, global).
+    ```
+
+    **If `shared-best-practice.txt` is empty or has no active practices:**
+
+    ```text
+    CSBP is active. Entry point loaded. Runtime file loaded.
+    No active practices found. Continuing without CSBP runtime guidance.
+    ```
+
+    If Codex does not acknowledge CSBP, check that the bootstrap line in `AGENTS.md` correctly references the path to `CSBP-entry-point.txt` and that the file exists at that path.
+  </Step>
+
 </Steps>
 
-<Tip>
-  Give people a way to get help. This could be a link to a support page, a chat with a customer support agent, or a forum for your product.
+## Session load order
 
-  Example: Need help? Reach out to us at [support@yourcompany.com](mailto:support@yourcompany.com).
-</Tip>
+It helps to understand exactly what Codex loads and when:
+
+| Path | Files loaded | When |
+|---|---|---|
+| Runtime path (every session) | `CSBP-entry-point.txt` → `shared-best-practice.txt` | Session start |
+| Formation path (on request only) | `CSBP-entry-point.txt` → `shared-best-practice.txt` → `shared-best-practice-compiler.txt` | When you ask for practice formation or maintenance work |
+
+The compiler is never loaded into normal runtime behavior. Loading it only when needed keeps the layer light, prevents speculative guidance from becoming active behavior, and ensures that formation logic never leaks into regular work sessions.
+
+## What not to do
+
+- Do not modify `CSBP-entry-point.txt` or `shared-best-practice-compiler.txt` — they are fixed system-definition layers.
+- Do not add practices to `shared-best-practice.txt` without going through the compiler protocol and receiving operator approval.
+- Do not run CSBP alongside an automatic memory system that is doing the same job — two persistence layers create unclear authority.
+
+---
+
+<CardGroup cols={2}>
+  <Card title="The Three-File System" icon="files" href="/concepts/three-file-system">
+    Understand the purpose of each file and why their jobs must stay separate.
+  </Card>
+  <Card title="Practice Formation" icon="flask" href="/lifecycle/formation">
+    Learn how to raise a candidate practice and guide it through the compiler protocol.
+  </Card>
+  <Card title="Authority Model" icon="shield" href="/concepts/authority-model">
+    See exactly how CSBP fits into the Codex authority stack.
+  </Card>
+  <Card title="Runtime Behavior" icon="bolt" href="/concepts/runtime-behavior">
+    Understand how active practices are read, matched, and applied during work.
+  </Card>
+</CardGroup>

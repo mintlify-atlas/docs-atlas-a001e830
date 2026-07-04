@@ -1,0 +1,63 @@
+---
+title: "Frequently Asked Questions about CSBP"
+sidebarTitle: "FAQ"
+description: "Answers to common questions about how CSBP works, what it controls, how it relates to AGENTS.md, and when and how practices are formed and changed."
+---
+
+These questions and answers are drawn directly from the CSBP source files. They cover the most common points of confusion about authority, practice formation, file immutability, and how CSBP fits alongside other instruction layers.
+
+<AccordionGroup>
+  <Accordion title="What is the difference between CSBP and AGENTS.md?">
+    `AGENTS.md` is the host contract — the primary instruction layer Codex operates under. CSBP is a lower-authority runtime practice layer that sits below it. The authority order is explicit:
+
+    ```text
+    operator instruction > AGENTS.md > local project instructions or project-local guidance > CSBP
+    ```
+
+    CSBP never overrides `AGENTS.md`. If a CSBP practice conflicts with `AGENTS.md`, the CSBP item is not applied. CSBP is designed for recurring operational practices that are strong enough to reuse across sessions but not strong enough to become part of the host contract.
+  </Accordion>
+
+  <Accordion title="Can CSBP write practices automatically?">
+    No. CSBP has no background writer. There is no automatic memory capture, no silent rule creation, no background promotion, and no runtime writes by default. Codex may propose a candidate practice. The compiler may evaluate it. But the operator decides whether it is promoted. The runtime file changes only after operator approval.
+  </Accordion>
+
+  <Accordion title="What happens if CSBP conflicts with an operator instruction?">
+    The conflicting CSBP item is not applied. CSBP is always the lowest-authority layer in the system. If any CSBP item conflicts with operator instruction, `AGENTS.md`, or local project instructions or project-local guidance, that item is set aside. CSBP does not create new policy authority for itself and cannot override any higher-authority layer.
+  </Accordion>
+
+  <Accordion title="Can I use CSBP alongside Codex Memories?">
+    It is not recommended if both are performing the same job — persisting best practices across sessions. Running two persistence layers creates unclear authority: it becomes ambiguous which layer governs what, and whether the two layers may contradict each other. CSBP is designed to keep persistence explicit, reviewed, and operator-approved. Adding a second automatic persistence system undermines that guarantee.
+  </Accordion>
+
+  <Accordion title="When is the compiler loaded?">
+    Only when practice formation work is explicitly requested by the operator. During normal runtime, only `CSBP-entry-point.txt` and `shared-best-practice.txt` are read. The compiler (`shared-best-practice-compiler.txt`) is not loaded into normal runtime behavior. If no candidate practice is under discussion, compiler logic does not enter runtime behavior.
+  </Accordion>
+
+  <Accordion title="What is the difference between `global` and `environment-global` scope?">
+    `global` means the practice is stable across all work contexts — it applies regardless of which environment, project, or session is active. `environment-global` means the practice is stable across the current working environment across sessions — it is scoped to a particular environment but is persistent within that environment. Both are valid CSBP scope values; neither is automatically more important than the other.
+  </Accordion>
+
+  <Accordion title="Can I maintain shared-best-practice.txt manually?">
+    Yes. Manual maintenance is explicitly allowed if you follow the documented block shape and promotion rules. However, manual does not mean casual. The same admission, rejection, normalization, authority, and operator approval constraints that apply through the compiler path still apply when maintaining the file manually. Following the block shape is required; skipping the quality and authority rules is not permitted.
+  </Accordion>
+
+  <Accordion title="What does `deprecated` status mean for a practice?">
+    A practice with `status: deprecated` is excluded from runtime use — it will not guide any active work decisions. However, it is **not deleted**. Deprecated blocks remain in `shared-best-practice.txt` so the practice history is preserved for review and maintenance purposes. A deprecated block may only be removed entirely on direct operator instruction.
+  </Accordion>
+
+  <Accordion title="How is a practice removed entirely?">
+    Only on direct operator instruction. Removal requires explicit operator sign-off and must follow the compiler path. A deprecated or invalid practice is never removed automatically, never removed during normal runtime use, and never removed without the operator explicitly requesting it. This applies both to deprecated practices and to practices found to be invalid while still active.
+  </Accordion>
+
+  <Accordion title="Can I modify CSBP-entry-point.txt or shared-best-practice-compiler.txt?">
+    No. Both files are fixed system-definition layers. The entry point defines the system identity, authority order, load order, mode routing, and write restrictions. The compiler defines the formation protocol. Neither may be modified, rewritten, or extended — during runtime use, practice formation work, or at any other time. Runtime practice changes belong only in `shared-best-practice.txt`, and only after passing through the compiler path with operator approval.
+  </Accordion>
+
+  <Accordion title="What makes a good `applies_when` condition?">
+    A good `applies_when` condition describes the **operational condition** — what work is currently being done — not the project. It must be stable across work contexts, meaning it should trigger reliably in any session where that kind of work is happening, regardless of which project or environment is active. It should be specific enough to match the right situations without being so narrow it only applies in one particular case. Conditions that describe project names, repository details, or session-specific facts are not valid `applies_when` values.
+  </Accordion>
+
+  <Accordion title="What is the difference between `do` and `goal`?">
+    `goal` states the **intended operational effect** — why the practice exists and what it is trying to achieve or prevent. `do` states the **primary correct default action** — the specific thing Codex should actually do when the practice applies. Both fields are required because they serve different functions at runtime: `goal` is used for interpretation (understanding the purpose before acting), and `do` is used for application (the concrete action to take). A practice without a clear `goal` can be misapplied; a practice without a clear `do` cannot be acted on.
+  </Accordion>
+</AccordionGroup>

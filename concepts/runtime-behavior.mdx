@@ -1,0 +1,111 @@
+---
+title: "Runtime Behavior: How CSBP Applies Practices"
+sidebarTitle: "Runtime Behavior"
+description: "During a normal Codex session CSBP loads two files, evaluates each active practice against current work, and applies matching ones as operational defaults."
+---
+
+During a normal Codex session, CSBP operates quietly. There are no background writes, no automatic captures, and no silent promotions. The system loads two files in a fixed order, checks each active practice against the current work, and applies any that match. If nothing matches, Codex continues without CSBP runtime guidance.
+
+## What happens during a normal session
+
+When CSBP is active and no practice formation work has been requested, the session follows this sequence:
+
+1. `CSBP-entry-point.txt` is read. This establishes system identity, authority order, load order, and write restrictions for the session.
+2. `shared-best-practice.txt` is loaded. This is the only file that contains runtime practices.
+3. Each active practice is evaluated against the current work using the `applies_when` condition.
+4. Practices that match guide decisions for that work. Practices that do not match are skipped.
+
+The compiler file (`shared-best-practice-compiler.txt`) is not loaded during this path. It exists only for practice formation and maintenance work, and its logic must not leak into runtime use.
+
+## Runtime read order for each practice block
+
+When Codex reads a practice block from `shared-best-practice.txt`, it follows a strict evaluation order. Each step either resolves the block or stops further processing for that block.
+
+<Steps>
+  <Step title="Check status">
+    Read the `status` field. If the value is `deprecated`, stop reading this block. Deprecated practices are excluded from runtime use entirely.
+  </Step>
+  <Step title="Check applies_when">
+    Evaluate the `applies_when` field against the current work. If the operational condition does not match, this practice is not relevant right now. Skip it.
+  </Step>
+  <Step title="Use goal for interpretation">
+    Read the `goal` field to understand the intended operational effect of the practice. This frames how the `do` and `avoid` fields should be interpreted in context.
+  </Step>
+  <Step title="Apply do as the default action">
+    The `do` field states the primary correct default action. Apply it as the default move for the current work.
+  </Step>
+  <Step title="Use avoid as the competing-pattern guard">
+    The `avoid` field names the recurring wrong pattern that the practice exists to prevent. Use it as a guard against regression — if this pattern appears, it signals that the practice's `do` should be applied or reinforced.
+  </Step>
+</Steps>
+
+## The empty state rule
+
+If `shared-best-practice.txt` contains no active practices that are relevant to the current work, Codex continues without CSBP runtime guidance. There is no fallback behavior, no default stance, and no forced action.
+
+No active match means no forced behavior. CSBP only contributes when it has something relevant to contribute.
+
+This rule also applies when `shared-best-practice.txt` is empty — for example, in a fresh installation before any practices have been promoted. The runtime layer simply has nothing to apply, and Codex proceeds normally.
+
+## Runtime mode vs practice formation mode
+
+CSBP has two operating modes. They are strictly separated. The runtime path does not load the compiler, and the formation path does not bypass the compiler's evaluation and approval requirements.
+
+<Tabs>
+  <Tab title="Runtime mode">
+    **Primary file:** `shared-best-practice.txt`
+
+    **Purpose:** Apply already-promoted practices when their `applies_when` condition matches the current work.
+
+    **Can do:**
+    - Read active practices from `shared-best-practice.txt`
+    - Guide decisions when `applies_when` matches
+    - Skip deprecated practices
+    - Continue without guidance when no relevant practice matches
+
+    **Must not do:**
+    - Invent new practices
+    - Revise existing practices
+    - Promote candidates
+    - Deprecate or remove practices silently
+    - Load or apply compiler logic
+
+    Runtime mode is the default. It is active during every normal Codex session unless the operator explicitly opens practice formation work.
+  </Tab>
+  <Tab title="Practice formation mode">
+    **Primary file:** `shared-best-practice-compiler.txt`
+
+    **Purpose:** Evaluate and shape candidate practices using the compiler protocol. Only active when the operator requests formation or maintenance work.
+
+    **Can do:**
+    - Evaluate candidate practices against admission and rejection criteria
+    - Normalize candidates into runtime block shape
+    - Propose promotion, revision, deprecation, or removal
+    - Split, merge, narrow, or broaden candidate formulations
+
+    **Must not do:**
+    - Auto-promote without operator approval
+    - Apply compiler logic as active runtime guidance
+    - Behave as runtime policy during the session
+    - Modify `shared-best-practice.txt` without operator approval
+
+    Practice formation mode does not replace runtime mode — both can apply in the same session if the operator opens formation work after the entry point is read. But the compiler's logic is scoped strictly to the formation task.
+  </Tab>
+</Tabs>
+
+## What CSBP does not do at runtime
+
+Understanding the boundaries of runtime behavior is as important as understanding what CSBP does. During a normal session:
+
+- **No new practice creation.** Codex does not draft, propose, or write new practices into `shared-best-practice.txt` on its own.
+- **No auto-promotion.** A pattern observed during runtime work is not automatically moved into the practice store.
+- **No silent writes.** `shared-best-practice.txt` is not modified during runtime use unless the operator has opened formation mode and approved the specific change.
+- **No compiler logic in runtime.** The formation rules, admission criteria, normalization steps, and rejection logic in `shared-best-practice-compiler.txt` do not become active behavior during normal work.
+
+If you want a recurring pattern to enter the practice store, that requires opening practice formation mode explicitly, running the candidate through the compiler protocol, and obtaining operator approval. See [Formation](/lifecycle/formation) for that process.
+
+## Deprecated practices
+
+Deprecated practices remain in `shared-best-practice.txt` after they are deprecated. They are not deleted automatically. They are available for review and maintenance history, but they are excluded from runtime use. The read-order check on `status` ensures that a deprecated block is never evaluated for `applies_when` or applied as a `do` instruction.
+
+Removal of a deprecated entry requires a direct operator instruction processed through the compiler protocol. For more on lifecycle transitions, see [Maintenance](/lifecycle/maintenance).

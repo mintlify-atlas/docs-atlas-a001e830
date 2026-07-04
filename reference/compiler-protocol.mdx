@@ -1,0 +1,171 @@
+---
+title: "Compiler Protocol: Formation Rules and Decisions"
+sidebarTitle: "Compiler Protocol"
+description: "Full reference for the compiler protocol: admission, rejection, normalization, lifecycle, and decision rules for candidate practice evaluation and promotion."
+---
+
+The shared best practice compiler protocol governs every decision about whether a candidate practice should enter `shared-best-practice.txt`, how it should be shaped, and what happens to it afterward. It covers evaluation, normalization, promotion, revision, deprecation, removal, and rejection. This page documents the full set of rules defined in `shared-best-practice-compiler.txt`.
+
+<Note>
+  The compiler is **not loaded during normal runtime use**. It is read only when practice formation work is explicitly requested by the operator. During regular sessions, only `CSBP-entry-point.txt` and `shared-best-practice.txt` are loaded.
+</Note>
+
+## What the compiler does (and does not do)
+
+The compiler has a narrow, defined object — and an equally explicit list of things it does not do.
+
+**Object:** Evaluate, normalize, promote, revise, deprecate, remove, or reject recurring global or environment-global operational best practices for `shared-best-practice.txt`.
+
+**Non-object — the compiler does NOT:**
+
+- Replace `AGENTS.md`
+- Replace local project instructions or project-local guidance
+- Store project-specific instructions
+- Store policy, tone, or style guidance
+- Store one-off fixes
+- Store recovery-only logic
+- Store speculative advice
+- Store broad behavioral framing
+
+## Valid inputs
+
+The compiler accepts a wide range of input forms. A candidate does not need to arrive as a fully formed block. Valid inputs include:
+
+- Operator observation
+- Free-text description
+- Conversation fragment
+- Rough hypothesis
+- Reported recurring mistake
+- Reported recurring omission
+- Reported recurring missed opportunity during real work
+
+## Discussion capabilities
+
+Before making a decision, the compiler protocol may work through the candidate in several ways:
+
+- Reinterpret the reported issue
+- Identify the likely underlying pattern
+- Split multiple patterns into separate candidates
+- Merge similar patterns into a single candidate
+- Narrow or broaden the formulation
+- Classify the issue as operational-level, policy-level, project-specific, or too weak in recurrence, scope, or clarity for promotion
+
+## Admission and rejection criteria
+
+<AccordionGroup>
+  <Accordion title="ADMIT — criteria a candidate must meet">
+    A candidate is admitted only when it satisfies **all** of the following:
+
+    - Recurring across sessions
+    - Global or environment-global in scope
+    - Actionable during real work
+    - Preventive by default
+    - Expressible as a short operational instruction telling what to do
+    - Stable across work contexts
+    - Not already covered by `AGENTS.md`
+    - Not already covered by a stronger local instruction
+    - Likely to reduce recurring waste or error
+  </Accordion>
+
+  <Accordion title="REJECT — criteria that disqualify a candidate">
+    A candidate is rejected if it matches **any** of the following:
+
+    - Project-specific
+    - Session-specific
+    - One-off
+    - Vague
+    - Diagnostic-only
+    - Recovery-only
+    - Post-failure only
+    - Duplicate of an existing practice
+    - Duplicate of `AGENTS.md`
+    - Duplicate of local project instructions or project-local guidance
+    - Too broad to match reliably
+    - Too narrow to matter outside one case
+    - Conflicts with higher-authority instructions
+    - Depends on hidden or unstable context
+    - Reads like explanation instead of instruction
+    - Reads like policy instead of operational correction
+  </Accordion>
+</AccordionGroup>
+
+## Normalization rules
+
+Admitted candidates are normalized before promotion. Normalization rewrites the candidate into runtime-ready block shape. The full normalization rules are:
+
+**Rewrite as:**
+- A preventive default
+- A runtime-ready instruction
+- One pattern per practice
+- Short stable wording
+- Direct verbs
+
+**Remove:**
+- Narrative
+- Non-operational explanation
+- Project-specific detail
+- Fallback phrasing
+- Recovery-first phrasing
+
+## Block quality rules
+
+The compiler enforces a strict one-to-one relationship between a practice block and a recurring pattern:
+
+- **One practice = one recurring pattern.** If a candidate contains more than one main action or more than one wrong pattern, it must be split.
+- **Split before promotion.** If a revision produces a split, each fragment is evaluated independently.
+- **Rewrite or reject** any candidate that is too broad, too narrow, overly explanatory, or not directly usable during real work.
+
+## Decision types
+
+After evaluation and normalization, the compiler issues one of five decisions:
+
+| Decision | Meaning |
+|---|---|
+| **promote** | The candidate is ready for runtime use. It enters `shared-best-practice.txt` as an active practice. |
+| **revise** | The candidate is valid but wording, scope, or split is still wrong. Revision happens in the same working pass. |
+| **reject** | The candidate is not suitable for shared runtime practice. |
+| **deprecate** | An active runtime practice becomes deprecated. |
+| **remove** | A deprecated or invalid runtime practice is removed from `shared-best-practice.txt`. |
+
+## Proposal shape
+
+When the compiler proposes a candidate for promotion, the proposal uses this fixed shape:
+
+```text
+candidate:      short description of the pattern
+kind:           environment | orientation | operation | verification
+scope:          global | environment-global
+rationale:      one short operational sentence
+proposed block: full block shape draft
+```
+
+The `rationale` field must be exactly one short operational sentence. The `id` field in the proposed block is left unassigned until the operator approves promotion. The operator assigns the final runtime `id`.
+
+## ID format and assignment
+
+Practice identifiers use the `PNNN` sequential format (e.g., `P001`, `P042`). The `id` is assigned **only at promotion** — never during the proposal stage. The operator assigns the final runtime `id`. Do not assign a final `id` in any proposal or draft.
+
+## Lifecycle
+
+The compiler manages the following lifecycle transitions:
+
+```text
+candidate  -> evaluate -> normalize -> promote | reject
+active     -> revise
+active     -> deprecate
+deprecated -> remove
+```
+
+- **Promote**: A candidate becomes an active runtime practice and enters `shared-best-practice.txt`.
+- **Deprecate**: An active runtime practice moves to `deprecated` status. It stays in the file.
+- **Remove**: A deprecated or invalid practice is removed from `shared-best-practice.txt` entirely.
+
+## Runtime maintenance rules
+
+All runtime maintenance operations — revisions, status changes, and removals — require operator approval. No practice change may happen without the operator deciding.
+
+The remove rule is strict: a deprecated practice is removed **only on direct operator instruction**. Removal never happens automatically and never during normal runtime use.
+
+## Authority
+
+The compiler can propose promotion but cannot approve it. Operator approval is required for every promotion. Runtime practices promoted through the compiler cannot redefine policy, scope, or authority. The full authority order is defined in `CSBP-entry-point.txt`.

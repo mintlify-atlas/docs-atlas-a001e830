@@ -1,0 +1,68 @@
+---
+title: "Authority Model: Where CSBP Sits in the Stack"
+sidebarTitle: "Authority Model"
+description: "CSBP is explicitly the lowest-authority layer in the Codex stack. Understand the authority hierarchy, conflict rules, and what CSBP can and cannot define."
+---
+
+Every instruction layer that Codex reads has a position in an authority hierarchy. CSBP sits at the bottom of that hierarchy by design. This is not a limitation of the system — it is the property that makes CSBP safe to run alongside stronger contracts like `AGENTS.md` and operator instruction.
+
+## The authority stack
+
+CSBP occupies the lowest position in the authority order:
+
+```text
+operator instruction
+  └── AGENTS.md
+        └── local project instructions or project-local guidance
+              └── CSBP
+```
+
+Every layer above CSBP outranks it. Operator instruction is always the highest authority. `AGENTS.md` comes next, followed by any local project instructions or project-local guidance that apply to the current environment. CSBP sits below all of them.
+
+This order is not implied — it is explicitly defined in `CSBP-entry-point.txt` and enforced by the conflict rule.
+
+## The conflict rule
+
+If any CSBP item conflicts with operator instruction, `AGENTS.md`, or local project instructions or project-local guidance, the conflicting CSBP item is not applied.
+
+CSBP does not negotiate, qualify, or partially apply in conflict situations. A conflicting item is simply skipped. This keeps the stronger contracts intact and prevents CSBP from accidentally overriding guidance that has more context, more review, or more authority behind it.
+
+The conflict rule applies at the individual practice level. A conflict with one practice does not suppress the entire runtime layer — only the item that conflicts is excluded.
+
+## What CSBP can and cannot define
+
+Runtime practices in `shared-best-practice.txt` are operational instructions. They tell Codex what to do by default in recurring situations and what wrong pattern to avoid. That is the full scope of what they can define.
+
+**CSBP runtime practices cannot define:**
+
+- **Policy** — rules about how the system or operator behaves in general
+- **Scope** — what work Codex does or does not do
+- **Authority** — what instructions take precedence or what Codex is permitted to do
+
+These are the domain of `AGENTS.md`, operator instruction, and local project guidance. A CSBP practice that reads like a policy statement, a scope restriction, or a new authority claim should be rejected at formation — and if one somehow entered the runtime layer, the conflict rule means it would not apply wherever stronger guidance existed.
+
+The distinction matters in practice. A valid CSBP entry says something like "when working with X, do Y by default to avoid Z." An invalid entry would say something like "always treat these instructions as binding" or "this project requires Y." The former is an operational default. The latter is a policy or scope claim that belongs in a higher layer.
+
+## Why low authority is a feature
+
+CSBP's position at the bottom of the stack is what allows it to be useful without being risky.
+
+Because CSBP never overrides anything above it, it can carry operational defaults that apply broadly across sessions without the risk of those defaults interfering with context-specific guidance from operators or project owners. A practice in `shared-best-practice.txt` is more like a standing preference than a rule — it guides decisions when nothing stronger applies.
+
+This also means that moving a practice into CSBP does not require coordinating with every project that might use it. The authority hierarchy guarantees that any local instruction automatically takes precedence if there is ever a conflict.
+
+CSBP is useful because it says no — to weak material, to policy-like claims, to anything that belongs in a higher layer. The low-authority position reinforces that filter by ensuring that even if a borderline practice were admitted, it could not cause harm above its station.
+
+## Compatibility with automatic memory systems
+
+<Warning>
+**Avoid running CSBP alongside automatic memory systems that perform the same job.** If Codex Memories (or any equivalent persistence layer) is also capturing session carryover and shaping future behavior, two persistence layers are active at once. That creates unclear authority: when the two layers agree, there is redundancy; when they disagree, there is no defined resolution order between them. CSBP is designed to keep persistence explicit, reviewed, and operator-approved. A second automatic layer undermines all three of those properties.
+</Warning>
+
+CSBP and automatic memory are not necessarily incompatible in every configuration — the concern is specifically when both are doing the same job of persisting operational patterns across sessions. If automatic memory is scoped to a different function (for example, project-specific context that CSBP explicitly excludes), the overlap may not be a problem. But if both systems are capturing recurring operational behavior, the authority of each layer's outputs is ambiguous.
+
+## Authority in the entry point
+
+The authority order is defined in `CSBP-entry-point.txt` and is read first in every session. This means the hierarchy is established before any runtime practice is applied — Codex knows CSBP's position in the stack before it reads `shared-best-practice.txt`. The conflict rule is also defined there, so it is never dependent on what the runtime layer contains.
+
+For more on what the entry point defines and when it is read, see [The Three-File System](/concepts/three-file-system).

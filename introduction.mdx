@@ -1,0 +1,76 @@
+---
+title: "CSBP: A Controlled Best Practice Layer for Codex"
+sidebarTitle: "Introduction"
+description: "CSBP is a lightweight three-file protocol kit that gives Codex a controlled, operator-reviewed middle layer for recurring operational best practices."
+---
+
+CSBP (Codex Shared Best Practice) is a lightweight three-file protocol kit for keeping recurring Codex best practices explicit, reviewed, and separate from automatic memory or `AGENTS.md`. It is not a memory system that writes itself. It is a review gate — a controlled layer that sits between chat history and your host contract, ensuring that only practices strong enough to reuse, and deliberate enough to approve, ever reach runtime.
+
+## The problem CSBP solves
+
+Long-lived Codex setups tend to fail in two opposite directions. Useful guidance either stays buried in chat history where it cannot be consistently applied, or it gets promoted too quickly into `AGENTS.md` before it has proven recurring value. A third failure mode is often worse: automatic persistence. Session residue, operator preferences, one-off fixes, and rough observations can start shaping future behavior without enough review.
+
+CSBP does the opposite. Every practice that enters the runtime layer has been evaluated against explicit admission criteria, normalized into a stable block shape, proposed to the operator, and approved. Nothing is written silently. Nothing is applied without prior promotion.
+
+<Info>
+  CSBP is for recurring operational practices that are strong enough to reuse across sessions, but not strong enough to become part of your host contract. It is not a replacement for `AGENTS.md` and it does not override higher-authority instructions.
+</Info>
+
+## The controlled middle layer
+
+CSBP occupies a specific position in the authority stack. Every CSBP practice is lower-authority than everything above it:
+
+```text
+operator instruction > AGENTS.md > local project instructions > CSBP
+```
+
+If any CSBP practice conflicts with operator instruction, `AGENTS.md`, or local project guidance, the conflicting CSBP item is not applied. CSBP never creates new policy authority for itself. Runtime practices do not define policy, scope, or authority — they only provide operational guidance when their stated condition matches the current work.
+
+## The three files
+
+CSBP is intentionally small. The entire system is three files, each with a distinct and non-overlapping job.
+
+| File | Role | When it is read |
+|---|---|---|
+| `CSBP-entry-point.txt` | Bootstrap and routing layer. Defines what CSBP is, authority order, usage modes, read order, and write restrictions. | First, every session. |
+| `shared-best-practice.txt` | Runtime layer. Stores promoted practices only. Active practices may guide work when their `applies_when` condition matches. | After the entry point. |
+| `shared-best-practice-compiler.txt` | Formation layer. Evaluates, normalizes, promotes, revises, deprecates, removes, or rejects candidate practices. | Only when practice formation or maintenance work is requested. |
+
+The split between the runtime layer and the compiler layer is intentional. The runtime layer applies already-approved practices. The compiler layer decides whether a new or revised practice deserves to exist. Those two jobs must not collapse into each other.
+
+<Note>
+  `CSBP-entry-point.txt` and `shared-best-practice-compiler.txt` are fixed system-definition layers. Do not modify, rewrite, or extend them. The only file that changes during normal operation is `shared-best-practice.txt`, and only after operator approval.
+</Note>
+
+## What CSBP is — and is not
+
+CSBP is built for patterns like these:
+
+- The same mistake keeps appearing across sessions
+- Codex repeatedly misses the same verification step
+- A useful working default keeps being rediscovered
+- An environment-level constraint should be available without rewriting `AGENTS.md`
+- A recurring operational correction is worth persisting across sessions
+
+A valid practice should be recurring, actionable, preventive, broader than one project or session, compatible with higher-authority instructions, and short enough to apply during real work.
+
+CSBP is **not** a place to store every useful thought. Material is rejected when it is project-specific, session-specific, one-off, vague, diagnostic-only, recovery-only, policy-like, or already covered by `AGENTS.md` or local instructions. This filter is part of the system. CSBP is useful because it says no.
+
+<Note>
+  CSBP has no background writer. It does not capture session content automatically, create rules silently, or promote anything without explicit operator approval. Codex may propose. The compiler may evaluate. The operator decides. The runtime file changes only after approval.
+</Note>
+
+## License
+
+CSBP is licensed under the [Creative Commons Attribution-ShareAlike 4.0 International License](https://creativecommons.org/licenses/by-sa/4.0/) (`CC BY-SA 4.0`).
+
+---
+
+<CardGroup cols={2}>
+  <Card title="Quickstart" icon="rocket" href="/quickstart">
+    Install CSBP in your Codex setup in a few steps and verify it is active.
+  </Card>
+  <Card title="The Three-File System" icon="files" href="/concepts/three-file-system">
+    Understand the roles of each file and why the layer separation matters.
+  </Card>
+</CardGroup>

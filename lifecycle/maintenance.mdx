@@ -1,0 +1,91 @@
+---
+title: "Maintaining Runtime Practices: Revise, Deprecate, Remove"
+sidebarTitle: "Maintenance"
+description: "How active practices are revised, deprecated, and removed — what each operation means, when it applies, and what requires direct operator instruction."
+---
+
+Once a practice is promoted into `shared-best-practice.txt`, it is not frozen. Practices can be revised when their wording or scope is no longer accurate, deprecated when they are no longer appropriate for runtime use, and removed when they should no longer exist in the file at all. Each of these operations follows the same controlled path as promotion: the compiler evaluates, proposes, and waits — the operator decides.
+
+## The full lifecycle
+
+Every practice in CSBP moves through a defined set of states. The lifecycle covers the complete set of transitions from initial candidate to final removal.
+
+```text
+candidate  → evaluate → normalize → promote | reject
+active     → revise
+active     → deprecate
+deprecated → remove
+```
+
+A practice begins as a candidate. If it passes evaluation and normalization, the operator may promote it to active status. From there, it can be revised, deprecated, or — after deprecation or when invalid — removed entirely. Nothing in this lifecycle happens without operator approval.
+
+## Revise
+
+Revision applies when an active practice is still valid in principle but its wording, scope, or split is no longer right. The compiler handles revision in the same working pass as the review — it does not open a separate formation cycle. A revised block is treated as a new proposal: the compiler rewrites it, presents it to the operator, and waits for approval before updating `shared-best-practice.txt`.
+
+Reasons to revise an active practice include:
+
+- The `applies_when` condition is too broad or too narrow after seeing the practice in use
+- The `do` instruction has drifted from the most effective default action
+- A single practice block should be split into two distinct patterns
+- Two existing blocks should be merged because they address the same pattern
+
+Revision requires operator approval. The existing block is not changed until the operator approves the revised form.
+
+## Deprecate
+
+Deprecation moves an active practice out of runtime use without removing it from the file. A deprecated practice is excluded from runtime guidance — Codex skips it during the `status` check — but it remains in `shared-best-practice.txt` as part of the review history.
+
+Reasons to deprecate an active practice include:
+
+- The pattern it addressed is now covered by `AGENTS.md` or a stronger local instruction
+- The practice has become project-specific and no longer applies globally
+- The practice conflicts with a higher-authority instruction that has been added since promotion
+- The underlying operational condition no longer applies
+
+Deprecation requires operator approval. The compiler may recommend deprecation, but the operator must confirm before the `status` field is changed to `deprecated`.
+
+## Remove
+
+Removal permanently deletes a practice block from `shared-best-practice.txt`. Removal is not a routine maintenance step — it is a deliberate action that requires a direct operator instruction.
+
+The compiler may remove:
+
+- A deprecated practice, when the operator explicitly instructs removal
+- An invalid active practice, when the operator explicitly instructs removal
+
+<Warning>
+  Removal never happens during normal runtime. The compiler does not remove practices on its own judgment, during a session review, or as part of any automatic maintenance path. A direct operator instruction is required every time. If you are not explicitly asking for a practice to be removed, it will not be removed.
+</Warning>
+
+## Manual maintenance
+
+You can also maintain `shared-best-practice.txt` directly, without going through the compiler conversation flow. Manual maintenance is allowed when you follow the documented block shape and promotion rules.
+
+Manual does not mean casual. The same constraints apply:
+
+- Admission and rejection criteria still apply — only practices that meet the threshold belong in the file
+- Normalization rules still apply — blocks must follow the standard shape and field rules
+- Authority constraints still apply — no practice may conflict with higher-authority instructions
+- Operator approval still applies — even for manual edits, the decision rests with you as the operator
+
+When editing the file manually, use the standard block shape and keep one practice per block.
+
+## What not to change
+
+Runtime practice changes belong only in `shared-best-practice.txt`.
+
+<Warning>
+  `CSBP-entry-point.txt` and `shared-best-practice-compiler.txt` are fixed system-definition layers. Do not modify them, rewrite them, or extend them. They define what CSBP is, how it is loaded, and how practices are formed. Changing them changes the system itself — not just a practice.
+</Warning>
+
+These files are read-only during both normal runtime and practice formation work. If you believe the system definition needs to change, that is a separate project-level decision — not a maintenance action within a session.
+
+<CardGroup cols={2}>
+  <Card title="Practice Formation" icon="circle-play" href="/lifecycle/formation">
+    Review the formation process that all new candidates follow before becoming active practices.
+  </Card>
+  <Card title="Compiler Protocol Reference" icon="code" href="/reference/compiler-protocol">
+    See the full compiler protocol specification, including all lifecycle decision rules.
+  </Card>
+</CardGroup>

@@ -1,0 +1,72 @@
+{
+  "projectType": "general",
+  "projectName": "CSBP – Codex Shared Best Practice",
+  "projectDescription": "A lightweight three-file protocol kit for maintaining a controlled, operator-approved shared memory layer of recurring best practices in Codex AI sessions.",
+  "theme": "luma",
+  "primaryColor": "#6366F1",
+  "lightColor": "#EEF2FF",
+  "darkColor": "#312E81",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Guide",
+        "groups": [
+          {
+            "group": "Introduction",
+            "pages": [
+              "introduction",
+              "quickstart"
+            ]
+          },
+          {
+            "group": "Core Concepts",
+            "pages": [
+              "concepts/three-file-system",
+              "concepts/authority-model",
+              "concepts/runtime-behavior"
+            ]
+          },
+          {
+            "group": "Practice Lifecycle",
+            "pages": [
+              "lifecycle/formation",
+              "lifecycle/admission-and-rejection",
+              "lifecycle/normalization",
+              "lifecycle/maintenance"
+            ]
+          },
+          {
+            "group": "Reference",
+            "pages": [
+              "reference/block-shape",
+              "reference/compiler-protocol",
+              "reference/entry-point",
+              "reference/faq"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "Three-file layered protocol: entry point, runtime store, and compiler",
+    "Operator-gated practice promotion – no automatic memory capture",
+    "Strict authority hierarchy below operator instructions and AGENTS.md",
+    "Structured practice block schema (id, status, scope, kind, applies_when, goal, do, avoid)",
+    "Practice lifecycle management: promote, revise, deprecate, remove",
+    "Lightweight runtime load – compiler only activated during formation work",
+    "Manual maintenance allowed following documented block shape and promotion rules",
+    "Compatible with any Codex environment that can read plain-text instruction files"
+  ],
+  "publicApiSurface": [
+    "CSBP-entry-point.txt – bootstrap and routing layer",
+    "shared-best-practice.txt – promoted runtime practice store",
+    "shared-best-practice-compiler.txt – practice formation and evaluation layer",
+    "Practice block fields: id (PNNN), status, scope, kind, applies_when, goal, do, avoid",
+    "Scope values: global, environment-global",
+    "Kind values: environment, orientation, operation, verification",
+    "Status values: active, deprecated",
+    "Lifecycle transitions: promote, revise, deprecate, remove, reject",
+    "Proposal shape: candidate, kind, scope, rationale, proposed block"
+  ]
+}
